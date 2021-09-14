@@ -1,8 +1,20 @@
-import React from 'react'
-import styled from 'styled-components'
-import { BsStarFill, BsStarHalf, BsStar } from 'react-icons/bs'
-const Stars = () => {
-  return <h4>stars</h4>
+import React from "react";
+import styled from "styled-components";
+import { star_icons } from "../utils/constants";
+
+const Stars = ({ stars, reviews }) => {
+  return (
+    <Wrapper>
+      <div className="stars">
+        <span>{star_icons[halfStarCount(stars)]}</span>
+      </div>
+      <p className="reviews">({reviews} customer reviews)</p>
+    </Wrapper>
+  );
+};
+
+function halfStarCount(stars) {
+  return Math.floor(stars / 0.5);
 }
 
 const Wrapper = styled.div`
@@ -18,5 +30,5 @@ const Wrapper = styled.div`
     margin-bottom: 0;
   }
   margin-bottom: 0.5rem;
-`
-export default Stars
+`;
+export default Stars;

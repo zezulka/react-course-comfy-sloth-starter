@@ -1,11 +1,135 @@
-import React from 'react'
-import styled from 'styled-components'
-import { useFilterContext } from '../context/filter_context'
-import { getUniqueValues, formatPrice } from '../utils/helpers'
-import { FaCheck } from 'react-icons/fa'
+import React from "react";
+import styled from "styled-components";
+import { useFilterContext } from "../context/filter_context";
+import { getUniqueValues, formatPrice } from "../utils/helpers";
+import { FaCheck } from "react-icons/fa";
 
 const Filters = () => {
-  return <h4>filters</h4>
+  const {
+    filters: {
+      text,
+      category,
+      company,
+      color,
+      minPrice,
+      price,
+      maxPrice,
+      shipping,
+    },
+    updateFilters,
+    clearFilters,
+    allProducts,
+  } = useFilterContext();
+
+  const categories = getUniqueValues(allProducts, "category");
+  const companies = getUniqueValues(allProducts, "company");
+  const colours = getUniqueValues(allProducts, "colors");
+
+  return (
+    <Wrapper>
+      <div className="content">
+        <form onSubmit={(e) => e.preventDefault()}>
+          <div className="form-control">
+            <input
+              type="text"
+              name="text"
+              placeholder="search"
+              className="search-input"
+              value={text}
+              onChange={updateFilters}
+            />
+          </div>
+          <div className="form-control">
+            <h5>category</h5>
+            <div>
+              {categories.map((c) => (
+                <button
+                  type="button"
+                  name="category"
+                  className={`${category === c.toLowerCase() ? "active" : ""}`}
+                  onClick={updateFilters}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="form-control">
+            <h5>company</h5>
+            <select name="company" value={company} onChange={updateFilters}>
+              {companies.map((c) => (
+                <option value={c}>{c}</option>
+              ))}
+            </select>
+          </div>
+          <div className="form-control">
+            <h5>colours</h5>
+            <div className="colors">
+              {colours.map((c) =>
+                c !== "all" ? (
+                  <button
+                    name="color"
+                    style={{ background: c }}
+                    className={`color-btn ${color === c && "active"}`}
+                    value={c}
+                    onClick={updateFilters}
+                  >
+                    {color === c && <FaCheck />}
+                  </button>
+                ) : (
+                  <button
+                    name="color"
+                    className={`all-btn ${color === c && "active"}`}
+                    value={c}
+                    onClick={updateFilters}
+                  >
+                    {c}
+                  </button>
+                )
+              )}
+            </div>
+          </div>
+          <div className="form-control">
+            <h5>price</h5>
+            <p className="price">{formatPrice(price)}</p>
+            <input
+              type="range"
+              name="price"
+              onChange={updateFilters}
+              steps={logarithmicSteps(maxPrice)}
+              min={minPrice}
+              max={maxPrice}
+              value={price}
+              data-numeric
+            />
+          </div>
+          <div className="form-control">
+            <label htmlFor="shipping"> free shipping</label>
+            <input
+              type="checkbox"
+              name="shipping"
+              checked={shipping}
+              onChange={updateFilters}
+            />
+          </div>
+        </form>
+        <button type="button" className="clear-btn" onClick={clearFilters}>
+          Reset Filters
+        </button>
+      </div>
+    </Wrapper>
+  );
+};
+
+function logarithmicSteps(ceiling) {
+  let values = [0];
+  let currStep = 1;
+  while (currStep < ceiling) {
+    values.push(currStep);
+    currStep *= 5;
+  }
+  values.push(ceiling);
+  return values;
 }
 
 const Wrapper = styled.section`
@@ -105,6 +229,6 @@ const Wrapper = styled.section`
       top: 1rem;
     }
   }
-`
+`;
 
-export default Filters
+export default Filters;
